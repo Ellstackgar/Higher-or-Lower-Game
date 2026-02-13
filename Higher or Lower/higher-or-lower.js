@@ -1,3 +1,5 @@
+
+const { Stats } = require("fs");
 const readline = require("readline");
 const rl = readline.createInterface({
     input: process.stdin,
@@ -5,9 +7,10 @@ const rl = readline.createInterface({
 });
 
 
-let generated = Math.floor(Math.random()*1000) + 1;
+
 
 function gameCycle() {
+    let generated = Math.floor(Math.random()*1000) + 1;
 
     rl.question("Pick any number. The chosen number is between 1 and 1000:\n", (num) => {
     
@@ -52,15 +55,7 @@ function gameCycle() {
     
     };
 
+// test
 
-
-
- 
 
 gameCycle();
-
-
-console.log("code")
-// this is a comment
-
-// this is another comment
