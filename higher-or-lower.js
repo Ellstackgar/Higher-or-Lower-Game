@@ -5,7 +5,10 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+const fs = require("fs")
+let parsing;
 let generated;
+let currentScore;
 
 // function for starting and playing game
 
@@ -14,7 +17,7 @@ function gameCycle() {
 
 
     rl.question("Pick any number. The chosen number is between 1 and 1000:\n", (num) => {
-    
+    currentScore += 1
         let guess = Number(num);
 
             if (isNaN(guess)) {
@@ -42,7 +45,8 @@ function gameCycle() {
 
              else {
         
-                console.log("Well done! You have guessed the right number!\n Going back to Menu.")
+                console.log("Well done! You have guessed the right number!\nGoing back to the Menu.\nThat took " + currentScore + " attempts.")
+
 
                 // add a line to say how many guesses it took to getting the right answer
                 mainMenu();
@@ -79,6 +83,7 @@ function chooseMenu(choice) {
 
         case "1":
             generated = Math.floor(Math.random()*1000) + 1;
+            currentScore = 0
             gameCycle();
             break;
 
@@ -100,11 +105,54 @@ function chooseMenu(choice) {
 
 };
 
+// function to saving new high score 
+
+function logHighScore(){
+
+    fs.writeFile("stats.json", JASON.stringify(newScore, null, 2), err => {
+
+        if (err) {
+            console.log(err);
+        } else {
+
+            console.log("File Overwritten") // keep for now - just a checker
+
+        
+        };
+        });
+    };
+
+// function to saving most recent attempted score
+
+
 // function to display stats for viewer
 function viewStats() {
 
-};
+    fs.readFileSync("stats.json", "utf-8", (err, jsonString) => {
 
+        if (err) {
+            console.log(err)
+        } else {        
+
+            try { 
+            parsing = JSON.parse(jsonString);
+
+
+            console.log(parsing);
+
+            // later make this readable when printed to terminal
+
+            } catch (err){
+                console.log("Error parsing JSON", err);
+            };           
+        };
+        
+       });
+    };
+
+
+
+viewStats();
 
 mainMenu();
 
@@ -112,3 +160,4 @@ mainMenu();
  
 
 gameCycle();
+
