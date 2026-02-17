@@ -4,7 +4,7 @@
   "description": "User enters numbers and tries to guess a randomly generated number with prompts if higher or lower than the guess.",
   "main": "higher-or-lower.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js --ignore stats.json"
   },
   "repository": {
     "type": "git",

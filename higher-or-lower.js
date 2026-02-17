@@ -6,9 +6,10 @@ const rl = readline.createInterface({
 });
 
 const fs = require("fs")
-let parsing;
+
 let generated;
 let currentScore;
+let newScore;
 
 // function for starting and playing game
 
@@ -18,6 +19,7 @@ function gameCycle() {
 
     rl.question("Pick any number. The chosen number is between 1 and 1000:\n", (num) => {
     currentScore += 1
+    newScore = currentScore
         let guess = Number(num);
 
             if (isNaN(guess)) {
@@ -45,10 +47,10 @@ function gameCycle() {
 
              else {
         
-                console.log("Well done! You have guessed the right number!\nGoing back to the Menu.\nThat took " + currentScore + " attempts.")
+                console.log("Well done! You have guessed the right number!\nGoing back to the Menu.\nThat took " + currentScore + " attempts.");
 
-
-                // add a line to say how many guesses it took to getting the right answer
+                logNewScores();
+              
                 mainMenu();
 
 
@@ -63,6 +65,7 @@ function gameCycle() {
 
     
     };
+
 
 // function of menu screen
 function mainMenu() {
@@ -88,7 +91,9 @@ function chooseMenu(choice) {
             break;
 
         case "2":
-            viewStats();
+            console.log(viewStats());
+            
+            mainMenu();
             break;
 
         case "3":
@@ -107,18 +112,28 @@ function chooseMenu(choice) {
 
 // function to saving new high score 
 
-function logHighScore(){
+function logNewScores(){
 
-    fs.writeFile("stats.json", JASON.stringify(newScore, null, 2), err => {
+        const parsing = viewStats();
+        
+            parsing["Last Attempt"] = newScore;
+
+            if (newScore > parsing.Leaderboard[4]) {
+                parsing.Leaderboard.push(newScore);
+                parsing.Leaderboard.sort((a,b) => b - a);
+                parsing.Leaderboard = parsing.Leaderboard.slice(0,5);
+
+            };
+
+            fs.writeFile("stats.json", JSON.stringify(parsing, null, 2), "utf-8", err => {
+          
+            console.log(parsing)
+    
 
         if (err) {
             console.log(err);
-        } else {
-
-            console.log("File Overwritten") // keep for now - just a checker
-
-        
         };
+
         });
     };
 
@@ -128,36 +143,32 @@ function logHighScore(){
 // function to display stats for viewer
 function viewStats() {
 
-    fs.readFileSync("stats.json", "utf-8", (err, jsonString) => {
+    const jsonString = fs.readFileSync("stats.json", "utf-8");
 
-        if (err) {
-            console.log(err)
-        } else {        
-
+    if (!jsonString.trim()) {
+        // File is empty — return default structure
+        return {
+            lastAttempt: 0,
+            Leaderboard: [0, 0, 0, 0, 0]
+        };
+    }
             try { 
-            parsing = JSON.parse(jsonString);
 
+                return JSON.parse(jsonString);
 
-            console.log(parsing);
-
-            // later make this readable when printed to terminal
+           // console.log(parsing, "first log");
 
             } catch (err){
                 console.log("Error parsing JSON", err);
             };           
         };
-        
-       });
-    };
 
+ 
 
-
-viewStats();
 
 mainMenu();
 
 
- 
 
-gameCycle();
+
 
